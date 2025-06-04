@@ -5,14 +5,13 @@ import {
   selectThemeMode,
   setIsLoggedInAC,
 } from "@/app/app-slice.ts"
-import { clearDataAC } from "@/common/actions"
-import { NavButton } from "@/common/components/NavButton/NavButton"
-import { AUTH_TOKEN } from "@/common/constants"
-import { ResultCode } from "@/common/enums"
-import { useAppDispatch, useAppSelector } from "@/common/hooks"
-import { containerSx } from "@/common/styles"
-import { getTheme } from "@/common/theme"
-import { useLogoutMutation } from "@/features/auth/api/authApi"
+import {NavButton} from "@/common/components/NavButton/NavButton"
+import {AUTH_TOKEN} from "@/common/constants"
+import {ResultCode} from "@/common/enums"
+import {useAppDispatch, useAppSelector} from "@/common/hooks"
+import {containerSx} from "@/common/styles"
+import {getTheme} from "@/common/theme"
+import {useLogoutMutation} from "@/features/auth/api/authApi"
 import MenuIcon from "@mui/icons-material/Menu"
 import AppBar from "@mui/material/AppBar"
 import Container from "@mui/material/Container"
@@ -20,6 +19,7 @@ import IconButton from "@mui/material/IconButton"
 import LinearProgress from "@mui/material/LinearProgress"
 import Switch from "@mui/material/Switch"
 import Toolbar from "@mui/material/Toolbar"
+import {baseApi} from "@/app/baseApi.ts";
 
 export const Header = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
@@ -41,8 +41,10 @@ export const Header = () => {
       if (res.data?.resultCode === ResultCode.Success) {
         dispatch(setIsLoggedInAC({ isLoggedIn: false }))
         localStorage.removeItem(AUTH_TOKEN)
-        dispatch(clearDataAC())
+        // dispatch(baseApi.util.resetApiState())   //чистит все, но нам это не нужно
       }
+    }).then(()=> {
+      dispatch(baseApi.util.invalidateTags(['Todolist', 'Task']))
     })
   }
 
