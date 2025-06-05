@@ -1,33 +1,53 @@
-import { TaskStatus } from "@/common/enums"
-import { useGetTasksQuery } from "@/features/todolists/api/tasksApi"
-import type { DomainTodolist } from "@/features/todolists/model/todolists-slice"
+import {TaskStatus} from "@/common/enums"
+import {useGetTasksQuery} from "@/features/todolists/api/tasksApi"
+import type {DomainTodolist} from "@/features/todolists/model/todolists-slice"
 import List from "@mui/material/List"
-import { TaskItem } from "./TaskItem/TaskItem"
+import {TaskItem} from "./TaskItem/TaskItem"
+import {TaskSkeleton} from "@/features/todolists/ui/Todolists/TodolistItem/Tasks/TaskSkeleton/TaskSkeleton.tsx";
 
 type Props = {
-  todolist: DomainTodolist
+    todolist: DomainTodolist
 }
 
-export const Tasks = ({ todolist }: Props) => {
-  const { id, filter } = todolist
+export const Tasks = ({todolist}: Props) => {
+    const {id, filter} = todolist
 
-  const { data } = useGetTasksQuery(id)
+    const {data, isLoading} = useGetTasksQuery(id)
+    // const {data, isLoading, error} = useGetTasksQuery(id)
+    // console.log(isError, error)
 
-  let filteredTasks = data?.items
-  if (filter === "active") {
-    filteredTasks = filteredTasks?.filter((task) => task.status === TaskStatus.New)
-  }
-  if (filter === "completed") {
-    filteredTasks = filteredTasks?.filter((task) => task.status === TaskStatus.Completed)
-  }
+    // const dispatch = useDispatch()
 
-  return (
-    <>
-      {filteredTasks?.length === 0 ? (
-        <p>Тасок нет</p>
-      ) : (
-        <List>{filteredTasks?.map((task) => <TaskItem key={task.id} task={task} todolist={todolist} />)}</List>
-      )}
-    </>
-  )
+    let filteredTasks = data?.items
+    if (filter === "active") {
+        filteredTasks = filteredTasks?.filter((task) => task.status === TaskStatus.New)
+    }
+    if (filter === "completed") {
+        filteredTasks = filteredTasks?.filter((task) => task.status === TaskStatus.Completed)
+    }
+
+    // // локальная обработка ошибок, но она используется не всегда
+    // // часто используется глобальная обработка ошибок
+    // useEffect(() => {
+    //     if (!error) return
+    //     if ('status' in error) {
+    //         const errorMessage = 'error' in error ? error.error : JSON.stringify(error.data)
+    //         dispatch(setAppErrorAC({error: errorMessage}))
+    //     } else {
+    //         dispatch(setAppErrorAC({error: error.message || 'Some error occurred'}))
+    //     }
+    // }, [error])
+
+
+    if (isLoading) return <TaskSkeleton/>
+
+    return (
+        <>
+            {filteredTasks?.length === 0 ? (
+                <p>Тасок нет</p>
+            ) : (
+                <List>{filteredTasks?.map((task) => <TaskItem key={task.id} task={task} todolist={todolist}/>)}</List>
+            )}
+        </>
+    )
 }
