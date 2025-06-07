@@ -4,12 +4,12 @@ import {
   useRemoveTodolistMutation,
   useUpdateTodolistTitleMutation
 } from "@/features/todolists/api/todolistsApi"
-import {type DomainTodolist} from "@/features/todolists/model/todolists-slice"
 import DeleteIcon from "@mui/icons-material/Delete"
 import IconButton from "@mui/material/IconButton"
 import styles from "./TodolistTitle.module.css"
 import {RequestStatus} from "@/common/types";
 import {useAppDispatch} from "@/common/hooks";
+import {DomainTodolist} from "@/features/todolists/lib/types";
 
 type Props = {
     todolist: DomainTodolist
